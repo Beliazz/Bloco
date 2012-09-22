@@ -1,0 +1,160 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Audio">
+      <UniqueIdentifier>{bbd22de1-b965-4923-a0aa-cba02247d27b}</UniqueIdentifier>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="EventManager">
+      <UniqueIdentifier>{0c587218-f328-4071-a3e9-ef4b7153d9f0}</UniqueIdentifier>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="GameLogic">
+      <UniqueIdentifier>{9aa36eee-aaa5-4eaf-a376-3d6cc255e0e6}</UniqueIdentifier>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="GameView">
+      <UniqueIdentifier>{508fca5a-b694-4b6c-9a7d-d6059e807ef2}</UniqueIdentifier>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Graphic">
+      <UniqueIdentifier>{0fe47bcc-dab9-438a-9dab-37d111d133e2}</UniqueIdentifier>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="SceneGraph">
+      <UniqueIdentifier>{734884c5-0b3d-4bb7-ab25-686238ff34d1}</UniqueIdentifier>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+    <Filter Include="Scripting">
+      <UniqueIdentifier>{10661f47-dce7-4dc9-b664-73b431e06258}</UniqueIdentifier>
+      <ParseFiles>true</ParseFiles>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Actors.h" />
+    <ClInclude Include="Application.h" />
+    <ClInclude Include="Bloco.h" />
+    <ClInclude Include="Scripting\ScriptEventListener.h">
+      <Filter>Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScriptFunctions.h">
+      <Filter>Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraph\ModelSceneNode.h">
+      <Filter>SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraph\Octree.h">
+      <Filter>SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraph\Scene.h">
+      <Filter>SceneGraph</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11Font.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11Material.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11Mesh.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11Model.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11ModelCommon.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11Renderer.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11Skeleton.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="Graphic\D3D11VertexTypes.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+    <ClInclude Include="GameView\HumanView.h">
+      <Filter>GameView</Filter>
+    </ClInclude>
+    <ClInclude Include="GameLogic\BaseGameLogic.h">
+      <Filter>GameLogic</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager\EventManagerImpl.h">
+      <Filter>EventManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\XACTAudio.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="Audio\XACTSound.h">
+      <Filter>Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="EventManager\Events.h">
+      <Filter>EventManager</Filter>
+    </ClInclude>
+    <ClInclude Include="Scripting\ScriptInput.h">
+      <Filter>Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="SceneGraph\ModelManager.h">
+      <Filter>Graphic</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="dllmain.cpp" />
+    <ClCompile Include="Scripting\ScriptEventListener.cpp">
+      <Filter>Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScriptFunctions.cpp">
+      <Filter>Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGraph\ModelManager.cpp">
+      <Filter>SceneGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGraph\ModelSceneNode.cpp">
+      <Filter>SceneGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGraph\Scene.cpp">
+      <Filter>SceneGraph</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic\D3D11Font.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic\D3D11Material.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic\D3D11Mesh.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic\D3D11Model.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic\D3D11Renderer.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="Graphic\D3D11Skeleton.cpp">
+      <Filter>Graphic</Filter>
+    </ClCompile>
+    <ClCompile Include="GameView\HumanView.cpp">
+      <Filter>GameView</Filter>
+    </ClCompile>
+    <ClCompile Include="GameLogic\BaseGameLogic.cpp">
+      <Filter>GameLogic</Filter>
+    </ClCompile>
+    <ClCompile Include="EventManager\EventManagerImpl.cpp">
+      <Filter>EventManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\XACTAudio.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Audio\XACTSound.cpp">
+      <Filter>Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="Actors.cpp" />
+    <ClCompile Include="Application.cpp" />
+    <ClCompile Include="EventManager\Events.cpp">
+      <Filter>EventManager</Filter>
+    </ClCompile>
+    <ClCompile Include="Scripting\ScriptInput.cpp">
+      <Filter>Scripting</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
