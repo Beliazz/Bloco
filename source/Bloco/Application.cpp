@@ -265,7 +265,7 @@ void Application::OnRender(double dTime, float fElapsed)
 		(*i)->VOnRender((FLOAT)dTime, fElapsed);
 	}
 }
-bool Application::OnUpdate(double dTime, float fElapsed)
+void Application::OnUpdate(double dTime, float fElapsed)
 {
 	if(m_pGame)
 	{
@@ -275,8 +275,6 @@ bool Application::OnUpdate(double dTime, float fElapsed)
 
  		m_pGame->VOnUpdate((float)dTime, fElapsed);
 	}
-
-	return true;
 }
 void Application::OnIdle()
 {

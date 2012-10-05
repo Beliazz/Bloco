@@ -96,7 +96,8 @@ public:
 	void Update();  //none blocking
 
 	virtual	void OnRender(double dTime, float fElapsed);
-	virtual	bool OnUpdate(double dTime, float fElapsed);
+	virtual	void OnUpdate(double dTime, float fElapsed);
+	virtual	void OnPostUpdate(double dTime){}
 	virtual	void OnReset(){}
 	virtual	void OnRestore(){}
 	virtual	void OnDeviceLost(){}
