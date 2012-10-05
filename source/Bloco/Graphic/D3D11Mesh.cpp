@@ -132,10 +132,13 @@ bool CD3D11Mesh::Restore()
 
 void CD3D11Mesh::Render()
 {
+	if (m_bHasAnimation)
+		m_pSkeleton->VRender();
+
 	m_pPass->getDevice()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-	m_pInputBuffer->Bind();
-	m_pInputLayout->Bind();
+ 	m_pInputBuffer->Bind();
+ 	m_pInputLayout->Bind();
 
 	m_pPass->Apply();
 

@@ -805,6 +805,6 @@ shared_ptr<IActor> BoneObjectParams::VCreate( BaseGameLogic *logic )
 
 shared_ptr<SceneNode> BoneObjectParams::VCreateSceneNode( shared_ptr<Scene> pScene )
 {
-	shared_ptr<BoneSceneNode> meshFile(DEBUG_CLIENTBLOCK BoneSceneNode( NULL, m_Id, NULL ,m_pActor->VGetMat() ));
-	return meshFile;		
+	//shared_ptr<BoneSceneNode> meshFile(DEBUG_CLIENTBLOCK BoneSceneNode( NULL, m_Id, NULL ,m_pActor->VGetMat() ));
+	return nullptr;		
 }

@@ -89,35 +89,41 @@ bool CD3D11Model::Create()
 		AddMaterialGroup(matGroup);
 	}
 
-	DWORD * indices = DEBUG_CLIENTBLOCK DWORD[m_pMeshNode->GetVertexBuffer()->m_vecPositions.size()];
 
-	for (unsigned int i = 0; i < m_pMeshNode->GetVertexBuffer()->m_vecPositions.size() ; i++)
+
+	if ( m_pMeshNode->GetBoneCount() == 0 )
 	{
-		indices[i] = i;
+		DWORD * indices = DEBUG_CLIENTBLOCK DWORD[m_pMeshNode->GetVertexBuffer()->m_vecPositions.size()];
+
+		for (unsigned int i = 0; i < m_pMeshNode->GetVertexBuffer()->m_vecPositions.size() ; i++)
+		{
+			indices[i] = i;
+		}
+
+
+		btTriangleIndexVertexArray* mIndexVertexArray = new btTriangleIndexVertexArray(
+			m_pMeshNode->GetVertexBuffer()->m_vecPositions.size()/3,
+			(int*)indices,
+			sizeof(DWORD)*3,
+			m_pMeshNode->GetVertexBuffer()->m_vecPositions.size(),
+			&((btScalar*)m_pMeshNode->GetVertexBuffer()->m_vecPositions.data())[0],
+			sizeof(float)*3);
+
+
+
+
+		m_pConvexShape = new btConvexTriangleMeshShape( mIndexVertexArray );
+		btShapeHull *hull = new btShapeHull(m_pConvexShape);
+		btScalar margin = m_pConvexShape->getMargin();
+		hull->buildHull(margin);
+		m_pConvexShape->setUserPointer(hull);
+
+		m_bHasAnimation = false;
 	}
-
-
-	btTriangleIndexVertexArray* mIndexVertexArray = new btTriangleIndexVertexArray(
-		m_pMeshNode->GetVertexBuffer()->m_vecPositions.size()/3,
-		(int*)indices,
-		sizeof(DWORD)*3,
-		m_pMeshNode->GetVertexBuffer()->m_vecPositions.size(),
-		&((btScalar*)m_pMeshNode->GetVertexBuffer()->m_vecPositions.data())[0],
-		sizeof(float)*3);
-
-
-
-
-	m_pConvexShape = new btConvexTriangleMeshShape( mIndexVertexArray );
-	btShapeHull *hull = new btShapeHull(m_pConvexShape);
-	btScalar margin = m_pConvexShape->getMargin();
-	hull->buildHull(margin);
-	m_pConvexShape->setUserPointer(hull);
-
-	m_bHasAnimation = false;
-
-	if ( m_pMeshNode->GetBoneCount() > 0 && m_pMeshNode->GetAnimationTakeCount() > 0 )
+	else
 	{
+		m_pConvexShape = NULL;
+
 		m_bHasAnimation = true;
 		
 		//Animations tracks

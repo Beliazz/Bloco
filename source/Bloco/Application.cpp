@@ -11,6 +11,10 @@ using namespace cgl;
 
 using namespace cgl;
 
+bool update = true;
+
+cgl::PCGLTimer timer;
+
 BLOCO_API Application::Application(Application** ppApp)
 {
 	(*ppApp) = this;
@@ -22,6 +26,9 @@ BLOCO_API Application::Application(Application** ppApp)
 	g_pInput = NULL;
 	m_pFrameSmoother = NULL;
 	m_updateInterval = 1.0f / 60.0f;
+
+	timer = cgl::CGLCpuTimer::Create();
+
 }
 BLOCO_API Application::~Application()
 {
@@ -33,7 +40,7 @@ void BLOCO_API Application::Run()
 	m_pGameLoop = new cgl::CGLGameLoop(this,m_pWindow->get());
 
 	m_pGameLoop->EnableFullSpeed(true);
-
+	//m_pGameLoop->SetUpdateInterval(0.02857142f);
 	m_pGameLoop->Run();
 
 
@@ -249,25 +256,24 @@ void BLOCO_API Application::Update()
 	// with smoothed elapsed time
 	m_time += m_pFrameSmoother->GetSmoothed();
 }
-void BLOCO_API Application::OnRender(double dTime, float fElapsed)
+
+void Application::OnRender(double dTime, float fElapsed)
 {
 	for(GameViewList::iterator i=m_pGame->m_gameViews.begin(),
 		end=m_pGame->m_gameViews.end(); i!=end; ++i)
 	{
-
 		(*i)->VOnRender((FLOAT)dTime, fElapsed);
-
-
 	}
 }
-bool BLOCO_API Application::OnUpdate(double dTime, float fElapsed)
+bool Application::OnUpdate(double dTime, float fElapsed)
 {
 	if(m_pGame)
 	{
 		safeTickEventManager(10);
 
-		g_pInput->Update();
-		m_pGame->VOnUpdate((float)dTime, fElapsed);
+ 		g_pInput->Update();
+
+ 		m_pGame->VOnUpdate((float)dTime, fElapsed);
 	}
 
 	return true;
@@ -289,6 +295,7 @@ void Application::OnIdle()
 		DispatchMessage(&msg);
 	}
 }
+
 
 
 LRESULT BLOCO_API	CALLBACK Application::WindowProc( HWND hWnd, UINT msg, WPARAM wparam, LPARAM lparam)
@@ -857,7 +864,7 @@ void Application::RunScript(string filename)
 
 float Application::GetFPS()
 {
-	return 1.0f/m_pGameLoop->ElapsedTimeExact();
+	return 1.0f/m_pGameLoop->ElapsedTime();
 }
 
 float Application::GetDrawTime()

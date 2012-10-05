@@ -22,7 +22,7 @@ public:
 
 	void  AddAnimationsTrack( shared_ptr<AnimationsTrack> track );
 	shared_ptr<AnimationsTrack> GetAnimationsTrack( string name )  { return m_AnimTrackMap[name]; }
-	shared_ptr<AnimationsTrack> GetCurrentAnimationsTrack()		{ return m_pCurrentAnimTrack; }
+	shared_ptr<AnimationsTrack> GetCurrentAnimationsTrack()		   { return m_pCurrentAnimTrack; }
 	void SetNextAnimationsTrack();
 
 	DWORD AnimationsTrackCount() { return m_AnimTrackMap.size(); }
@@ -61,6 +61,7 @@ private:
 	float m_CurrentTime;
 	float m_fTime;
 	DWORD m_lastKey;
+	HANDLE m_thread;
 };
 
 class AnimationsTrack
@@ -114,7 +115,7 @@ private:
 class CD3D11Bone
 {
 public:
-	CD3D11Bone( string name, string parentName, Mat bindPoseMatrix, Mat globalMatrix, IActor* actor );
+	CD3D11Bone( string name, string parentName, Mat bindPoseMatrix, Mat globalMatrix, Mat* global, IActor* actor );
 	~CD3D11Bone();
 
 	bool Init();
@@ -132,6 +133,7 @@ public:
 	void		SetParent( CD3D11Bone* parent ) { m_pParent = parent; }
 	DWORD		AnimationsTrackCount() { return m_AnimTrackMap.size(); }
 	bool		Update( DWORD keyindex, float interpol );
+	Mat			GetWorldMatrix();
 	void		SetWorldMatrix( Mat world );
 
 private:
@@ -140,8 +142,9 @@ private:
 	string		 m_sParent;
 	CD3D11Bone*	 m_pParent;
 
-	Mat m_matBindPose;
-	Mat m_matGlobal;
+	Mat  m_matBindPose;
+	Mat  m_matGlobal;
+	Mat* m_matParent;
 
 	map<string,shared_ptr<AnimationsTrack>> m_AnimTrackMap;
 	shared_ptr<AnimationsTrack>			 m_pCurrentAnimTrack;

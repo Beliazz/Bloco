@@ -643,7 +643,6 @@ bool BLOCO_API RootNode::VRemoveChild(ActorId id)
 HRESULT BLOCO_API RootNode::VRenderChildren(Scene *pScene)
 {
 	// This code creates fine control of the render passes.
-
 	for (int pass = RenderPass_0; pass < RenderPass_Last; ++pass)
 	{
 		switch(pass)

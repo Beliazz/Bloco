@@ -37,6 +37,29 @@ class Mesh;
 
 void BLOCO_API HumanView::VOnRender(double fTime, float fElapsedTime )
 {
+	m_pRenderer->Begin();
+
+	ScreenElementList::iterator i = m_ScreenElements.begin();
+	while ( i!=m_ScreenElements.end() && (*i)->VGetZOrder() <= PASS_SCENE)
+	{
+		if ( (*i)->VIsVisible() )
+		{
+			(*i)->VOnRender(fTime, fElapsedTime);
+		}
+
+		++i;
+	}
+
+	VRenderDiagnostic();
+
+	m_pRenderer->End();
+
+
+	return;
+
+
+
+
 	m_currTick = timeGetTime();
 	if (m_currTick == m_lastDraw)
 		return;
@@ -205,8 +228,6 @@ LRESULT BLOCO_API CALLBACK HumanView::VOnMsgProc( AppMsg msg )
 
 void BLOCO_API HumanView::VOnUpdate( int deltaMilliseconds )
 {
-	m_pProcessManager->UpdateProcesses(deltaMilliseconds);
-
 	m_pConsole->Update(deltaMilliseconds);
 
 	// This section of code was added post-press. It runs through the screenlist

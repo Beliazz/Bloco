@@ -214,7 +214,16 @@ HRESULT MeshSceneNode::VOnRestore( Scene *pScene )
 		printf("[SYSTEM] MeshSceneNode::VOnRestore( Scene *pScene ) m_pModel->Create() failed\n");
 		return E_FAIL;
 	}
+	shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *VGet()->ActorId() );
+
+	shared_ptr<CKinematicController> kinematicController = shared_ptr<CKinematicController>(DEBUG_CLIENTBLOCK CKinematicController(actor));
 	
+	g_pApp->m_pGame->VGetGamePhysics()->VAddKinematicController(kinematicController,actor.get(),0,PhysMat_Playdough);
+
+
+
+	m_matLocal = Mat(m_pMeshNode->GetGlobalMatrix());
+
 	//Add Bones
 	for (unsigned int i = 0; i < m_pMeshNode->GetBoneCount() ; i++)
 	{
@@ -242,9 +251,11 @@ HRESULT MeshSceneNode::VOnRestore( Scene *pScene )
 
 		SAFE_DELETE(params);
 
-		CD3D11Bone* pBone =  DEBUG_CLIENTBLOCK CD3D11Bone( name, parentName, bindPoseMatrix, globalMatrix, NULL /*g_pApp->m_pGame->VGetActor(id).get()*/ );
+		CD3D11Bone* pBone =  DEBUG_CLIENTBLOCK CD3D11Bone( name, parentName, bindPoseMatrix, globalMatrix, &m_matLocal, g_pApp->m_pGame->VGetActor(id).get() );
 
-		//g_pApp->m_pGame->VGetGamePhysics()->VAddBox(Vec(1.0f,1.0f,1.0f),g_pApp->m_pGame->VGetActor(id).get(),0.0,PhysMat_Playdough);
+
+
+		g_pApp->m_pGame->VGetGamePhysics()->VAddBox(Vec(m_pMeshNode->GetBone( i ).m_boundingBox.x,m_pMeshNode->GetBone( i ).m_boundingBox.y,m_pMeshNode->GetBone( i ).m_boundingBox.z),g_pApp->m_pGame->VGetActor(id).get(),0.0,PhysMat_Playdough);
 
 		m_pModel->AddBone( pBone );
 	}

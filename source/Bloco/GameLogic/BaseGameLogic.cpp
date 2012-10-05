@@ -193,8 +193,6 @@ void BLOCO_API BaseGameLogic::VOnUpdate(float time, float elapsedTime)
 		++i;
 	}
 
-	
-
 	if(m_pPhysics)
 	{
 		m_pPhysics->VOnUpdate(elapsedTime);

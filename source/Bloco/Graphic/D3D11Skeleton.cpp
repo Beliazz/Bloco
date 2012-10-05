@@ -1,14 +1,51 @@
 #include "Bloco.h"
-
+#include <process.h>
 /************************************************************************/
 /*CD3D11Bone                                                            */
 /************************************************************************/
+typedef struct 
+{
+  
 
-CD3D11Bone::CD3D11Bone( string name, string parentName, Mat bindPoseMatrix, Mat globalMatrix, IActor* pActor ) :
+  int iParam;
+  TCHAR *szParam;
+ 
+} THREADSTRUCT, *PTHREADSTRUCT;
+ 
+DWORD WINAPI ThreadProc(LPVOID pVoid)
+{
+ 
+ /* 
+  * Grab the argument passed to CreateThread(),
+  * and cast it to the proper type.
+  */
+  PTHREADSTRUCT pts = (PTHREADSTRUCT)pVoid;
+ 
+
+ /*
+  * Clean up this thread's resources by returning.
+  * Note that by returning from this function,
+  * the system will automatically call ExitThread()
+  * with the value returned.
+  */
+  return 0UL;
+}
+
+
+
+
+
+
+
+
+
+
+CD3D11Bone::CD3D11Bone( string name, string parentName, Mat bindPoseMatrix, Mat globalMatrix, Mat* global, IActor* pActor ) :
 	m_sName(name), 
 	m_sParent(parentName),
 	m_matBindPose(bindPoseMatrix),
 	m_matGlobal(globalMatrix),
+	m_matParent(global),
 	m_pActor(pActor)
 {
 }
@@ -52,7 +89,12 @@ void CD3D11Bone::AddAnimationsTrack( shared_ptr<AnimationsTrack> track )
 
 void CD3D11Bone::SetWorldMatrix( Mat world )
 {
-	//m_pWorldMatrix->SetMatrix( m_matBindPose * m_matGlobal * world );
+	m_matGlobal = world;
+}
+
+Mat CD3D11Bone::GetWorldMatrix()
+{
+	return m_matBindPose*m_matGlobal*(*m_matParent);
 }
 
 
@@ -78,10 +120,15 @@ CD3D11Skeleton::~CD3D11Skeleton()
 
 	m_pBones.clear();
 	m_AnimTrackMap.clear();
-}
 
+	CloseHandle(m_thread);
+}
+cgl::PCGLTimer t;
 bool CD3D11Skeleton::Init()
 {
+	t = cgl::CGLCpuTimer::Create();
+
+
 	m_CurrentTime = 0.0f;
 	m_fTime = 1.0f;
 	for (unsigned int i = 0; i < BoneCount() ; i++)
@@ -105,6 +152,8 @@ bool CD3D11Skeleton::Init()
 
 	if(!m_pevMatrixPalette->restore())
 		return false;
+
+
 
 	return true;
 }
@@ -141,11 +190,8 @@ bool CD3D11Skeleton::Restore()
 
 bool CD3D11Skeleton::VRender( )
 {
-	for (unsigned int i = 0; i < BoneCount() ; i++)
-	{
-		if(!GetBone(i)->Render())
-			return false;
-	}
+	if(m_pevMatrixPalette->get()->AsMatrix()->SetMatrixArray( m_BoneGlobals[0].GetArray(), 0, m_BoneGlobals.size() ) != S_OK )
+		return false;
 
 	return true;
 }
@@ -202,6 +248,10 @@ void CD3D11Skeleton::SetWorldMatrix( Mat world )
 {
 }
 
+
+
+
+
 bool CD3D11Skeleton::Update( DWORD const elapsedMs )
 {
 	m_fTime += (float)elapsedMs/1000;
@@ -214,19 +264,39 @@ bool CD3D11Skeleton::Update( DWORD const elapsedMs )
 		m_fTime = m_pCurrentAnimTrack->GetStartTime();
 	}
 
+// 	THREADSTRUCT ts; 
+// 
+// 	/* Fill in the data structure */
+// 	ts.iParam   = 69;
+// 	ts.szParam  = _T("Hello, threaded world!");
+// 
+// 	m_thread = CreateThread(NULL,				/* Security attributes (NULL = default) */
+// 		0,					/* Stack size (0 = default) */
+// 		ThreadProc,		/* Address of thread callback */
+// 		(LPVOID)&ts,		/* Argument casted to void pointer */
+// 		0,					/* Creation flags (0 = not suspended) */
+// 		NULL);				/* Pointer to thread ID value */
+// 
+// 	if (m_thread == NULL)
+// 		printf("Failed to create thread! [%d]\n", GetLastError());
+// 
+// 
+// 	t->Stop();
+
+	t->Start();
 	BuildAnimation();
-
-	if(m_pevMatrixPalette->get()->AsMatrix()->SetMatrixArray( m_BoneGlobals[0].GetArray(), 0, m_BoneGlobals.size() ) != S_OK )
-		return false;
-
+	t->Stop();
+	
 	return true;
 }
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 void CD3D11Skeleton::BuildAnimation()
 {
 	DWORD firstKeyIndex = 0;
 	DWORD nextKeyIndex  = 0;
-
 
 	if (m_fTime < m_pCurrentAnimTrack->GetKey(m_lastKey)->GetTime())
 		m_lastKey = 0;
@@ -253,6 +323,7 @@ void CD3D11Skeleton::BuildAnimation()
 		}
 	}
 
+	float time = 0.0f;
 	for (unsigned int i = 0; i < BoneCount() ; i++)
 	{
 		Mat a = m_pCurrentAnimTrack->GetKey( firstKeyIndex + i )->GetMatrix();
@@ -270,9 +341,16 @@ void CD3D11Skeleton::BuildAnimation()
 
 		float s = (m_fTime - T1) / (T2 - T1);
 
-		m_BoneGlobals[i] = a; 
-		
-		//g_pApp->m_pGame->VGetGamePhysics()->VKinematicMove(a,GetBone(i)->GetID());
+		m_BoneGlobals[i] = a;
+
+		GetBone(i)->SetWorldMatrix(a);
+
+		//safeQueEvent(IEventDataPtr(shared_ptr<EvtData_SetActorTransform>(DEBUG_CLIENTBLOCK EvtData_SetActorTransform(GetBone(i)->GetID(),GetBone(i)->GetWorldMatrix()))));
+
+		t->Start();		
+		g_pApp->m_pGame->VGetGamePhysics()->VKinematicMove(GetBone(i)->GetWorldMatrix(),GetBone(i)->GetID());
+		t->Stop();
+		time += t->get();
 	} 
 }
 
