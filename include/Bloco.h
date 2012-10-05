@@ -20,6 +20,9 @@
 #include <cgl.h>
 #pragma comment(lib, "ClearGraphicsLibrary.lib")
 
+#include <cbe.h>
+#pragma comment(lib, "ClearBlockEngine.lib")
+
 // Input
 #include <CIL.h>
 #pragma comment(lib, "ClearInputLibrary.lib")
