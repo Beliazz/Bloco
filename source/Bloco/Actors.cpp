@@ -204,6 +204,10 @@ ActorParams BLOCO_API * ActorParams::CreateFromLuaObj( LuaObject srcData )
 	{
 		pActorParams = DEBUG_CLIENTBLOCK ModelObjectParams();
 	}
+	else if ( 0 == strcmp( pActorType, "Voxel" ) )
+	{
+		pActorParams = DEBUG_CLIENTBLOCK VoxelObjectParams();
+	}
 	else if ( 0 == strcmp( pActorType, "Camera" ) )
 	{
 		pActorParams = DEBUG_CLIENTBLOCK CameraObjectParams();
@@ -807,4 +811,163 @@ shared_ptr<SceneNode> BoneObjectParams::VCreateSceneNode( shared_ptr<Scene> pSce
 {
 	//shared_ptr<BoneSceneNode> meshFile(DEBUG_CLIENTBLOCK BoneSceneNode( NULL, m_Id, NULL ,m_pActor->VGetMat() ));
 	return nullptr;		
+}
+
+
+
+VoxelObjectParams::VoxelObjectParams()
+{
+	m_Mat = MatIdentity();
+	m_Type = AT_Voxel; 
+	m_Col= Vec(0.5f,0.5f,0.5f,0.5f); 
+	strcpy( m_sScriptFilename, "" );
+	m_Size=sizeof(VoxelObjectParams); 
+	m_IsModified = false;
+	m_AABB = Vec(10.0f,10.0f,10.0f);
+	m_bPhysicActor = true;
+	strcpy( m_sName, "" );
+}
+
+VoxelObjectParams::VoxelObjectParams( int width, int height, int depth, int ChunkSize ) :
+	m_width(width),
+	m_height(height),
+	m_depth(depth),
+	m_ChunkSize(ChunkSize)
+{
+	m_Mat = MatIdentity();
+	m_Type=AT_Voxel; 
+	m_Col= Vec(0.5f,0.5f,0.5f,0.5f); 
+	strcpy( m_sScriptFilename, "" );
+	m_Size=sizeof(VoxelObjectParams); 
+	m_IsModified = false;
+	m_bPhysicActor = true;
+	strcpy( m_sName, "" );
+}
+
+bool VoxelObjectParams::VInit( std::istrstream &in )
+{
+	if (ActorParams::VInit(in))
+	{
+		m_Type=AT_Model; 
+		for (int i=0; i<4; ++i)
+			for (int j=0; j<4; ++j)
+				in >> m_Mat.GetStorage().m[i][j];
+		return true;
+	}
+	return false;
+}
+
+bool VoxelObjectParams::VInit( LuaObject srcData, TErrorMessageList & errorMessages )
+{
+	if ( false == ActorParams::VInit( srcData, errorMessages ) )
+	{
+		return false;
+	}
+
+	m_Type = AT_Model;
+	m_bDynamic = true;
+	m_Mat = MatIdentity();
+
+
+	//Positon
+	LuaObject positionObj = srcData[ "Position" ];
+	if ( positionObj.IsTable() )
+	{
+		float x = positionObj[ "x" ].GetFloat();
+		float y = positionObj[ "y" ].GetFloat();
+		float z = positionObj[ "z" ].GetFloat();
+
+		m_Mat = MatTranslation( x, y, z );
+	}
+
+
+	LuaObject matObj = srcData[ "Mat" ];
+	if ( matObj.IsTable() )
+	{
+		const int tableCount = matObj.GetTableCount();
+		if ( 16 != tableCount )
+		{
+			const std::string err( "Incorrect number of parameters in the 'Mat' member." );
+			errorMessages.push_back( err );
+			return false;
+		}
+		else
+		{
+			char name[4] = "_00";
+
+			for( int i = 1; i <= 4; ++i ) 
+			{
+				name[1] = '0' + i;
+
+				for( int j = 1; j <= 4; ++j ) 
+				{
+					name[2] = '0' + j;
+
+					LuaObject entry = matObj[ name ];
+					if( entry.IsNumber() ) 
+					{
+						m_Mat.GetStorage().m[i - 1][j - 1] = entry.GetFloat();
+					}
+				}
+			}
+		}
+	}
+
+	//Physic
+	LuaObject PhysicObj = srcData[ "Physic" ];
+	if ( PhysicObj.IsString() )
+	{
+		string strPhysic = PhysicObj.GetString();
+
+		if ( strPhysic == "static")
+			m_bDynamic = false;
+		else
+			m_bDynamic = true;
+	}
+
+	//Voxel
+	LuaObject widthObj = srcData[ "width" ];
+	if ( widthObj.IsInteger() )
+	{
+		m_width = widthObj.GetInteger();
+	}
+
+	LuaObject heightObj = srcData[ "height" ];
+	if ( heightObj.IsInteger() )
+	{
+		m_height = heightObj.GetInteger();
+	}
+
+	LuaObject depthObj = srcData[ "depth" ];
+	if ( depthObj.IsInteger() )
+	{
+		m_depth = depthObj.GetInteger();
+	}
+
+	LuaObject chunkSizeObj = srcData[ "chunkSize" ];
+	if ( chunkSizeObj.IsInteger() )
+	{
+		m_ChunkSize = chunkSizeObj.GetInteger();
+	}
+
+	return true;
+}
+
+void VoxelObjectParams::VSerialize( std::ostrstream &out ) const
+{
+
+}
+
+shared_ptr<IActor> VoxelObjectParams::VCreate( BaseGameLogic *logic )
+{
+	m_pActor = shared_ptr<IActor>(DEBUG_CLIENTBLOCK BaseActor( m_Mat, AT_Model, shared_ptr<VoxelObjectParams>(DEBUG_CLIENTBLOCK VoxelObjectParams(*this))));
+	logic->VAddActor(m_pActor, this);
+
+	return m_pActor;
+}
+
+shared_ptr<SceneNode> VoxelObjectParams::VCreateSceneNode( shared_ptr<Scene> pScene )
+{
+	shared_ptr<VoxelSceneNode> meshFile(DEBUG_CLIENTBLOCK VoxelSceneNode(m_width, m_height, m_depth, m_ChunkSize, m_sName, m_Id, m_pActor->VGetMat()));
+	return meshFile;
 }

@@ -40,6 +40,7 @@
     <ClInclude Include="SceneGraph\ModelSceneNode.h" />
     <ClInclude Include="SceneGraph\Octree.h" />
     <ClInclude Include="SceneGraph\Scene.h" />
+    <ClInclude Include="SceneGraph\VoxelSceneNode.h" />
     <ClInclude Include="Scripting\ScriptEventListener.h" />
     <ClInclude Include="Scripting\ScriptFunctions.h" />
     <ClInclude Include="Scripting\ScriptInput.h" />
@@ -63,6 +64,7 @@
     <ClCompile Include="SceneGraph\ModelManager.cpp" />
     <ClCompile Include="SceneGraph\ModelSceneNode.cpp" />
     <ClCompile Include="SceneGraph\Scene.cpp" />
+    <ClCompile Include="SceneGraph\VoxelSceneNode.cpp" />
     <ClCompile Include="Scripting\ScriptEventListener.cpp" />
     <ClCompile Include="Scripting\ScriptFunctions.cpp" />
     <ClCompile Include="Scripting\ScriptInput.cpp" />

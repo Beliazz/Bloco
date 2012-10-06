@@ -122,6 +122,9 @@ bool CD3D11Model::Create()
 	}
 	else
 	{
+
+
+
 		m_pConvexShape = NULL;
 
 		m_bHasAnimation = true;

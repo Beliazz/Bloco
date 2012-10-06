@@ -103,7 +103,8 @@ HRESULT ModelSceneNode::VOnRestore( Scene *pScene )
 			btTransform localTrans;
 			localTrans = Mat_to_btTransform(m_vecMeshSceneNodes[i]->m_matLocal);
 
-			compound->addChildShape(localTrans,m_vecMeshSceneNodes[i]->GetCollisionshape());
+			if (m_vecMeshSceneNodes[i]->GetCollisionshape())
+				compound->addChildShape(localTrans,m_vecMeshSceneNodes[i]->GetCollisionshape());	
 		}
 
 		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *VGet()->ActorId() );
@@ -232,10 +233,10 @@ HRESULT MeshSceneNode::VOnRestore( Scene *pScene )
 
 		Mat globalMatrix   = Mat( m_pMeshNode->GetBone( i ).m_GlobalMatrix.m_data );
 		Mat bindPoseMatrix = Mat( m_pMeshNode->GetBone( i ).m_BindPoseMatrix.m_data );
-
-
-		//Get new ActorID
-		ActorId id = g_pApp->m_pGame->GetNewActorID();
+// 
+// 
+// 		//Get new ActorID
+ 		ActorId id = g_pApp->m_pGame->GetNewActorID();
 
 		BoneObjectParams* params =  DEBUG_CLIENTBLOCK BoneObjectParams(name,parentName,globalMatrix,bindPoseMatrix);
 
@@ -251,16 +252,12 @@ HRESULT MeshSceneNode::VOnRestore( Scene *pScene )
 
 		SAFE_DELETE(params);
 
-		CD3D11Bone* pBone =  DEBUG_CLIENTBLOCK CD3D11Bone( name, parentName, bindPoseMatrix, globalMatrix, &m_matLocal, g_pApp->m_pGame->VGetActor(id).get() );
-
-
+ 		CD3D11Bone* pBone =  DEBUG_CLIENTBLOCK CD3D11Bone( name, parentName, bindPoseMatrix, globalMatrix, &m_matLocal, g_pApp->m_pGame->VGetActor(id).get() );
 
 		g_pApp->m_pGame->VGetGamePhysics()->VAddBox(Vec(m_pMeshNode->GetBone( i ).m_boundingBox.x,m_pMeshNode->GetBone( i ).m_boundingBox.y,m_pMeshNode->GetBone( i ).m_boundingBox.z),g_pApp->m_pGame->VGetActor(id).get(),0.0,PhysMat_Playdough);
 
 		m_pModel->AddBone( pBone );
 	}
-
-
 
 
 

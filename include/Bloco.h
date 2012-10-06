@@ -70,6 +70,7 @@
 #include "SceneGraph/ModelManager.h"
 #include "SceneGraph/Scene.h"
 #include "SceneGraph/ModelSceneNode.h"
+#include "SceneGraph/VoxelSceneNode.h"
 
 #include "GameView/HumanView.h"
 #include "GameLogic/BaseGameLogic.h"

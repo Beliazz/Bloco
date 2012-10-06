@@ -124,8 +124,8 @@ bool CD3D11Mesh::Restore()
 		return false;
 	}
 
-	if (m_bHasAnimation)
-		m_pSkeleton->Restore();
+ 	if (m_bHasAnimation)
+ 		m_pSkeleton->Restore();
 
 	return true;
 }

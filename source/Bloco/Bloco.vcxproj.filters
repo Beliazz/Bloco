@@ -97,6 +97,9 @@
     <ClInclude Include="SceneGraph\ModelManager.h">
       <Filter>Graphic</Filter>
     </ClInclude>
+    <ClInclude Include="SceneGraph\VoxelSceneNode.h">
+      <Filter>SceneGraph</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="dllmain.cpp" />
@@ -155,6 +158,9 @@
     </ClCompile>
     <ClCompile Include="Scripting\ScriptInput.cpp">
       <Filter>Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="SceneGraph\VoxelSceneNode.cpp">
+      <Filter>SceneGraph</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

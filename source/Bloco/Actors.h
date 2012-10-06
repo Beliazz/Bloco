@@ -23,6 +23,7 @@ enum ActorType
 	AT_ModelChild_Bone,
 	AT_Camera,
 	AT_Plane,
+	AT_Voxel,
 };
 
 class BLOCO_API BaseActor : public IActor
@@ -99,6 +100,7 @@ public:
 	virtual shared_ptr<SceneNode> VCreateSceneNode(shared_ptr<Scene> pScene) { shared_ptr<SceneNode> p; return p; }
 };
 
+
 class BLOCO_API ModelObjectParams : public ActorParams
 {
 public:
@@ -115,6 +117,35 @@ public:
 	virtual shared_ptr<IActor> VCreate(BaseGameLogic *logic);
 	virtual shared_ptr<SceneNode> VCreateSceneNode(shared_ptr<Scene> pScene);
 };
+
+
+
+class BLOCO_API VoxelObjectParams : public ActorParams
+{
+public:
+	int m_width;
+	int m_height;
+	int m_depth;
+
+	int m_ChunkSize;
+
+	VoxelObjectParams();
+	VoxelObjectParams( int width, int height, int depth, int ChunkSize );
+
+	virtual bool VInit(std::istrstream &in);
+	virtual bool VInit( LuaObject srcData, TErrorMessageList & errorMessages );
+	virtual void VSerialize(std::ostrstream &out) const;
+	virtual shared_ptr<IActor> VCreate(BaseGameLogic *logic);
+	virtual shared_ptr<SceneNode> VCreateSceneNode(shared_ptr<Scene> pScene);
+};
+
+
+
+
+
+
+
+
 
 class BLOCO_API BoneObjectParams : public ActorParams
 {

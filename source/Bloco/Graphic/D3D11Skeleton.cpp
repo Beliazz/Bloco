@@ -120,8 +120,6 @@ CD3D11Skeleton::~CD3D11Skeleton()
 
 	m_pBones.clear();
 	m_AnimTrackMap.clear();
-
-	CloseHandle(m_thread);
 }
 cgl::PCGLTimer t;
 bool CD3D11Skeleton::Init()
