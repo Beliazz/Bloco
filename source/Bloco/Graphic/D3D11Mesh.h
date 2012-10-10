@@ -124,6 +124,10 @@ private:
 
 	bool m_bHasAnimation;
 
+	vector<CD3D11Bone*> m_pBones;
+	vector<Mat> m_BoneGlobals;
+	cgl::PD3D11EffectVariable	m_pevMatrixPalette;
+
 	// for testing only single pass
 	cgl::PD3D11EffectPass m_pPass;
 

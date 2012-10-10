@@ -127,7 +127,7 @@ public:
 	string		GetName()	{return m_sName;}
 	CD3D11Bone* GetParent() { return m_pParent; }
 	string		GetParentName() { return m_sParent; }
-	Mat			GetGlobal() { return m_matGlobal; }
+	Mat*		GetGlobal() { return &m_matGlobal; }
 	Mat			GetBindShape() { return m_matBindPose; }
 	ActorId		GetID() { return m_pActor->VGetID(); }
 	void		SetParent( CD3D11Bone* parent ) { m_pParent = parent; }

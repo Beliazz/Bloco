@@ -26,9 +26,6 @@ BLOCO_API Application::Application(Application** ppApp)
 	g_pInput = NULL;
 	m_pFrameSmoother = NULL;
 	m_updateInterval = 1.0f / 60.0f;
-
-	timer = cgl::CGLCpuTimer::Create();
-
 }
 BLOCO_API Application::~Application()
 {
@@ -40,6 +37,7 @@ void BLOCO_API Application::Run()
 	m_pGameLoop = new cgl::CGLGameLoop(this,m_pWindow->get());
 
 	m_pGameLoop->EnableFullSpeed(true);
+	m_pGameLoop->EnableDrawTimeMeasurement(true);
 	//m_pGameLoop->SetUpdateInterval(0.02857142f);
 	m_pGameLoop->Run();
 

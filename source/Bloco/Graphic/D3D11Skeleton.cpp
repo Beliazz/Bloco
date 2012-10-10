@@ -124,9 +124,6 @@ CD3D11Skeleton::~CD3D11Skeleton()
 cgl::PCGLTimer t;
 bool CD3D11Skeleton::Init()
 {
-	t = cgl::CGLCpuTimer::Create();
-
-
 	m_CurrentTime = 0.0f;
 	m_fTime = 1.0f;
 	for (unsigned int i = 0; i < BoneCount() ; i++)
@@ -252,15 +249,15 @@ void CD3D11Skeleton::SetWorldMatrix( Mat world )
 
 bool CD3D11Skeleton::Update( DWORD const elapsedMs )
 {
-	m_fTime += (float)elapsedMs/1000;
-
-	if (m_fTime > m_pCurrentAnimTrack->GetEndTime() )
-	{
-		//Set Next Track && Time = Start Time
-		SetNextAnimationsTrack();
-		m_lastKey = 0;
-		m_fTime = m_pCurrentAnimTrack->GetStartTime();
-	}
+// 	m_fTime += (float)elapsedMs/1000;
+// 
+// 	if (m_fTime > m_pCurrentAnimTrack->GetEndTime() )
+// 	{
+// 		//Set Next Track && Time = Start Time
+// 		SetNextAnimationsTrack();
+// 		m_lastKey = 0;
+// 		m_fTime = m_pCurrentAnimTrack->GetStartTime();
+// 	}
 
 // 	THREADSTRUCT ts; 
 // 
@@ -281,9 +278,21 @@ bool CD3D11Skeleton::Update( DWORD const elapsedMs )
 // 
 // 	t->Stop();
 
-	t->Start();
-	BuildAnimation();
-	t->Stop();
+
+
+	for (unsigned int i = 0; i < BoneCount() ; i++)
+	{
+		m_BoneGlobals[i] = (*GetBone(i)->GetGlobal());
+	} 
+
+
+
+
+
+// 
+// 	t->Start();
+// 	BuildAnimation();
+// 	t->Stop();
 	
 	return true;
 }
@@ -345,10 +354,10 @@ void CD3D11Skeleton::BuildAnimation()
 
 		//safeQueEvent(IEventDataPtr(shared_ptr<EvtData_SetActorTransform>(DEBUG_CLIENTBLOCK EvtData_SetActorTransform(GetBone(i)->GetID(),GetBone(i)->GetWorldMatrix()))));
 
-		t->Start();		
-		g_pApp->m_pGame->VGetGamePhysics()->VKinematicMove(GetBone(i)->GetWorldMatrix(),GetBone(i)->GetID());
-		t->Stop();
-		time += t->get();
+// 		t->Start();		
+// 		g_pApp->m_pGame->VGetGamePhysics()->VKinematicMove(GetBone(i)->GetWorldMatrix(),GetBone(i)->GetID());
+// 		t->Stop();
+// 		time += t->get();
 	} 
 }
 

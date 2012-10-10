@@ -89,35 +89,55 @@ HRESULT ModelSceneNode::VOnRestore( Scene *pScene )
 	VSetTransform(VGet()->ToWorld());
 
 
+// 	if (VGetActorParams()->m_bPhysicActor)
+// 	{
+// 		btCompoundShape* compound = new btCompoundShape();
+// 
+// 		for (int i = 0; i < m_vecMeshSceneNodes.size() ; i++)
+// 		{
+// 			btTransform localTrans;
+// 			localTrans = Mat_to_btTransform(m_vecMeshSceneNodes[i]->m_matLocal);
+// 
+// 			if (m_vecMeshSceneNodes[i]->GetCollisionshape())
+// 				compound->addChildShape(localTrans,m_vecMeshSceneNodes[i]->GetCollisionshape());	
+// 		}
+// 
+// 		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *VGet()->ActorId() );
+// 
+// 		g_pApp->m_pGame->VGetGamePhysics()->VAddCompoundShape(compound,actor.get(),SpecificGravity(PhysDens_Iron_Cast), PhysMat_Normal);
+// 	}
+// 	
+// 
+// 	for (int i = 0; i < m_vecMeshSceneNodes.size() ; i++)
+// 	{
+// 		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *m_vecMeshSceneNodes[i]->VGet()->ActorId() );
+// 		g_pApp->m_pGame->VGetGamePhysics()->VSetCompoundShapeChild(*VGet()->ActorId(),actor.get(),i);
+// 	}
 
-
-	
-
-
-	if (VGetActorParams()->m_bPhysicActor)
-	{
-		btCompoundShape* compound = new btCompoundShape();
-
-		for (int i = 0; i < m_vecMeshSceneNodes.size() ; i++)
-		{
-			btTransform localTrans;
-			localTrans = Mat_to_btTransform(m_vecMeshSceneNodes[i]->m_matLocal);
-
-			if (m_vecMeshSceneNodes[i]->GetCollisionshape())
-				compound->addChildShape(localTrans,m_vecMeshSceneNodes[i]->GetCollisionshape());	
-		}
-
-		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *VGet()->ActorId() );
-
-		g_pApp->m_pGame->VGetGamePhysics()->VAddCompoundShape(compound,actor.get(),SpecificGravity(PhysDens_Iron_Cast), PhysMat_Normal);
-	}
-	
-
-	for (int i = 0; i < m_vecMeshSceneNodes.size() ; i++)
-	{
-		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *m_vecMeshSceneNodes[i]->VGet()->ActorId() );
-		g_pApp->m_pGame->VGetGamePhysics()->VSetCompoundShapeChild(*VGet()->ActorId(),actor.get(),i);
-	}
+// 	if (VGetActorParams()->m_bPhysicActor)
+// 	{
+// 		btCompoundShape* compound = new btCompoundShape();
+// 
+// 		for (int i = 0; i < m_vecMeshSceneNodes.size() ; i++)
+// 		{
+// 			btTransform localTrans;
+// 			localTrans = Mat_to_btTransform(m_vecMeshSceneNodes[i]->m_matLocal);
+// 
+// 			if (m_vecMeshSceneNodes[i]->GetCollisionshape())
+// 				compound->addChildShape(localTrans,m_vecMeshSceneNodes[i]->GetCollisionshape());	
+// 		}
+// 
+// 		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *VGet()->ActorId() );
+// 
+// 		g_pApp->m_pGame->VGetGamePhysics()->VAddCompoundShape(compound,actor.get(),0/*SpecificGravity(PhysDens_Iron_Cast)*/, PhysMat_Normal);
+// 	}
+// 	
+// 
+// 	for (int i = 0; i < m_vecMeshSceneNodes.size() ; i++)
+// 	{
+// 		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *m_vecMeshSceneNodes[i]->VGet()->ActorId() );
+// 		g_pApp->m_pGame->VGetGamePhysics()->VSetCompoundShapeChild(*VGet()->ActorId(),actor.get(),i);
+// 	}
 
 	return S_OK;
 }
@@ -215,48 +235,84 @@ HRESULT MeshSceneNode::VOnRestore( Scene *pScene )
 		printf("[SYSTEM] MeshSceneNode::VOnRestore( Scene *pScene ) m_pModel->Create() failed\n");
 		return E_FAIL;
 	}
-	shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *VGet()->ActorId() );
 
-	shared_ptr<CKinematicController> kinematicController = shared_ptr<CKinematicController>(DEBUG_CLIENTBLOCK CKinematicController(actor));
-	
-	g_pApp->m_pGame->VGetGamePhysics()->VAddKinematicController(kinematicController,actor.get(),0,PhysMat_Playdough);
-
-
-
-	m_matLocal = Mat(m_pMeshNode->GetGlobalMatrix());
-
-	//Add Bones
-	for (unsigned int i = 0; i < m_pMeshNode->GetBoneCount() ; i++)
+	if (m_pMeshNode->GetBoneCount() > 0)
 	{
-		string name		  = m_pMeshNode->GetBone( i ).m_sName;
-		string parentName = m_pMeshNode->GetBone( i ).m_sParentName;
 
-		Mat globalMatrix   = Mat( m_pMeshNode->GetBone( i ).m_GlobalMatrix.m_data );
-		Mat bindPoseMatrix = Mat( m_pMeshNode->GetBone( i ).m_BindPoseMatrix.m_data );
-// 
-// 
-// 		//Get new ActorID
- 		ActorId id = g_pApp->m_pGame->GetNewActorID();
+		shared_ptr<IActor> actor = g_pApp->m_pGame->VGetActor( *VGet()->ActorId() );
 
-		BoneObjectParams* params =  DEBUG_CLIENTBLOCK BoneObjectParams(name,parentName,globalMatrix,bindPoseMatrix);
+		shared_ptr<CKinematicController> kinematicController = shared_ptr<CKinematicController>(DEBUG_CLIENTBLOCK CKinematicController(actor));
+	
+		g_pApp->m_pGame->VGetGamePhysics()->VAddKinematicController(kinematicController,actor.get(),0,PhysMat_Playdough);
 
-		ActorParams* rootParams = m_pRootNode->VGetActorParams();
 
-		//---------------------------------------------
-		//Fire New Actor Event:
-		//Logic: calls params->VCreate()
-		//View:  calls params->VCreateScenenNode()
-		//---------------------------------------------
-		const EvtData_New_Actor actorEvent( id , params );
-		const bool bSuccess = safeTriggerEvent( actorEvent );
+		m_matLocal = Mat(m_pMeshNode->GetGlobalMatrix());
 
-		SAFE_DELETE(params);
 
- 		CD3D11Bone* pBone =  DEBUG_CLIENTBLOCK CD3D11Bone( name, parentName, bindPoseMatrix, globalMatrix, &m_matLocal, g_pApp->m_pGame->VGetActor(id).get() );
+		kinematicController->SetLocalMatrix(m_matLocal);
 
-		g_pApp->m_pGame->VGetGamePhysics()->VAddBox(Vec(m_pMeshNode->GetBone( i ).m_boundingBox.x,m_pMeshNode->GetBone( i ).m_boundingBox.y,m_pMeshNode->GetBone( i ).m_boundingBox.z),g_pApp->m_pGame->VGetActor(id).get(),0.0,PhysMat_Playdough);
+		for (unsigned int i = 0; i < m_pMeshNode->GetBoneCount() ; i++)
+		{
+			string parentName	  = m_pMeshNode->GetBone( i ).m_sParentName;
+			string name			  = m_pMeshNode->GetBone( i ).m_sName;
+			Mat	   bindPoseMatrix = Mat(m_pMeshNode->GetBone( i ).m_BindPoseMatrix.m_data);
+			Mat	   globalMatrix	  = Mat(m_pMeshNode->GetBone( i ).m_GlobalMatrix.m_data);
 
-		m_pModel->AddBone( pBone );
+// 			//Get new ActorID
+//  			ActorId id = g_pApp->m_pGame->GetNewActorID();
+//  			
+//  			BoneObjectParams* params =  DEBUG_CLIENTBLOCK BoneObjectParams(name,parentName,globalMatrix,bindPoseMatrix);
+//  			
+//  			ActorParams* rootParams = m_pRootNode->VGetActorParams();
+//  			
+//  						//---------------------------------------------
+//  						//Fire New Actor Event:
+//  						//Logic: calls params->VCreate()
+//  						//View:  calls params->VCreateScenenNode()
+//  						//---------------------------------------------
+//  			const EvtData_New_Actor actorEvent( id , params );
+//  			const bool bSuccess = safeTriggerEvent( actorEvent );
+//  			
+//  			SAFE_DELETE(params);
+ 			
+
+  			CD3D11Bone* pBone =  DEBUG_CLIENTBLOCK CD3D11Bone( name, parentName, bindPoseMatrix, globalMatrix, &m_matLocal, NULL );
+			m_pModel->AddBone(pBone);
+
+			CBone* phyBone = new CBone(bindPoseMatrix,pBone->GetGlobal(),name,parentName,eBoneCollisionShape_Box);
+
+			kinematicController->AddBone(phyBone,Vec(m_pMeshNode->GetBone( i ).m_boundingBox.x,m_pMeshNode->GetBone( i ).m_boundingBox.y,m_pMeshNode->GetBone( i ).m_boundingBox.z));
+		}
+
+		for (unsigned int i = 0; i < m_pMeshNode->GetAnimationTakeCount() ; i++)
+		{
+			ClearModelSDK::sAnimationsTake__ take = ClearModelSDK::sAnimationsTake__(m_pMeshNode->GetAnimationTake(i));
+
+			string name		 = take.m_sName;
+			float  startTime = take.m_fStart;
+			float  endTime   = take.m_fEnd;
+
+			CAnimationTrack* pAnimationTrack = new CAnimationTrack( name, startTime, endTime );
+
+			int boneIndex = 0;
+
+			for (int j = 0; j < take.m_vecAnimationKeys.size(); j++)
+			{
+				if (boneIndex + 1 > m_pMeshNode->GetBoneCount())
+				{
+					boneIndex = 0;
+				}
+
+				float timeStamp = take.m_vecAnimationKeys[j].m_fTimestamp;
+				Mat   matBoneSpaceKey   = Mat(take.m_vecAnimationKeys[j].m_Matrix.m_data);
+				Mat   matKey			= Mat(m_pMeshNode->GetBone( boneIndex ).m_BindPoseMatrix.m_data) * Mat(take.m_vecAnimationKeys[j].m_Matrix.m_data);
+
+				pAnimationTrack->AddAnimationsKey(DEBUG_CLIENTBLOCK CAnimationsKey( boneIndex, timeStamp,matBoneSpaceKey, matKey ));
+				boneIndex++;
+			}
+
+			kinematicController->AddAnimationTrack(pAnimationTrack);
+		}
 	}
 
 
@@ -295,7 +351,7 @@ HRESULT MeshSceneNode::VOnUpdate( Scene *pScene, DWORD const elapsedMs )
 	if (!m_pModel->SetViewMatrix( pScene->GetCamera()->GetView() ))
 		return false;
 
-	if (!m_pModel->SetWorldMatrix( VGet()->ToWorld() * m_pRootNode->VGet()->ToWorld() /** VGet()->ToWorld()*/ /** m_matLocal*/ ))
+	if (!m_pModel->SetWorldMatrix( MatTranslation(-150.0f,0.0f,0.0f)*VGet()->ToWorld() * m_pRootNode->VGet()->ToWorld() /** VGet()->ToWorld()*/ /** m_matLocal*/ ))
 		return false;
 
 	if (!m_pModel->SetLightDirection( Vec( -0.577f, 0.577f, -0.577f ) ))
@@ -304,7 +360,7 @@ HRESULT MeshSceneNode::VOnUpdate( Scene *pScene, DWORD const elapsedMs )
 	if (!m_pModel->SetCameraPosition( pScene->GetCamera()->GetPosition() ))
 		return false;
 
-	m_pModel->Update( elapsedMs );
+ 	m_pModel->Update( elapsedMs );
 
 	return S_OK;
 }

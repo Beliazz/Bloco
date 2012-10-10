@@ -78,11 +78,10 @@ bool CD3D11Mesh::Init()
 
 	if (m_bHasAnimation)
 	{
-		if (!m_pSkeleton->Init())
-		{
-			printf("[SYSTEM] CD3D11Mesh::m_pSkeleton->Init() failed\n");
+		m_pevMatrixPalette = cgl::CD3D11EffectVariableFromName::Create( m_pEffect, "matBonePallet" );
+
+		if(!m_pevMatrixPalette->restore())
 			return false;
-		}
 	}
 
 	if ( !m_pevMatWorld->restore() ||
@@ -127,14 +126,20 @@ bool CD3D11Mesh::Restore()
  	if (m_bHasAnimation)
  		m_pSkeleton->Restore();
 
+	if (m_bHasAnimation)
+	{
+		m_pevMatrixPalette = cgl::CD3D11EffectVariableFromName::Create( m_pEffect, "matBonePallet" );
+
+		if(!m_pevMatrixPalette->restore())
+			return false;
+	}
+
+
 	return true;
 }
 
 void CD3D11Mesh::Render()
 {
-	if (m_bHasAnimation)
-		m_pSkeleton->VRender();
-
 	m_pPass->getDevice()->GetContext()->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
  	m_pInputBuffer->Bind();
@@ -195,7 +200,8 @@ bool CD3D11Mesh::SetCameraPosition( Vec pos )
 
 void CD3D11Mesh::AddBone( CD3D11Bone* bone )
 {
-	m_pSkeleton->AddBone( bone );
+	m_pBones.push_back(bone);
+	m_BoneGlobals.push_back(*bone->GetGlobal());
 }
 
 void CD3D11Mesh::AddAnimationsTrack( shared_ptr<AnimationsTrack> track )
@@ -206,7 +212,17 @@ void CD3D11Mesh::AddAnimationsTrack( shared_ptr<AnimationsTrack> track )
 void CD3D11Mesh::Update( DWORD const elapsedMs )
 {
 	if (m_bHasAnimation)
-		m_pSkeleton->Update( elapsedMs );
+	{
+
+		for (unsigned int i = 0; i < m_pBones.size() ; i++)
+		{
+			m_BoneGlobals[i] = (*m_pBones[i]->GetGlobal());
+		} 
+
+
+		if(m_pevMatrixPalette->get()->AsMatrix()->SetMatrixArray( m_BoneGlobals[0].GetArray(), 0, m_BoneGlobals.size() ) != S_OK )
+			return;
+	}
 }
 
 

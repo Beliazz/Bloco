@@ -89,69 +89,7 @@ bool CD3D11Model::Create()
 		AddMaterialGroup(matGroup);
 	}
 
-
-
-	if ( m_pMeshNode->GetBoneCount() == 0 )
-	{
-		DWORD * indices = DEBUG_CLIENTBLOCK DWORD[m_pMeshNode->GetVertexBuffer()->m_vecPositions.size()];
-
-		for (unsigned int i = 0; i < m_pMeshNode->GetVertexBuffer()->m_vecPositions.size() ; i++)
-		{
-			indices[i] = i;
-		}
-
-
-		btTriangleIndexVertexArray* mIndexVertexArray = new btTriangleIndexVertexArray(
-			m_pMeshNode->GetVertexBuffer()->m_vecPositions.size()/3,
-			(int*)indices,
-			sizeof(DWORD)*3,
-			m_pMeshNode->GetVertexBuffer()->m_vecPositions.size(),
-			&((btScalar*)m_pMeshNode->GetVertexBuffer()->m_vecPositions.data())[0],
-			sizeof(float)*3);
-
-
-
-
-		m_pConvexShape = new btConvexTriangleMeshShape( mIndexVertexArray );
-		btShapeHull *hull = new btShapeHull(m_pConvexShape);
-		btScalar margin = m_pConvexShape->getMargin();
-		hull->buildHull(margin);
-		m_pConvexShape->setUserPointer(hull);
-
-		m_bHasAnimation = false;
-	}
-	else
-	{
-
-
-
-		m_pConvexShape = NULL;
-
-		m_bHasAnimation = true;
-		
-		//Animations tracks
-		for (unsigned int i = 0; i < m_pMeshNode->GetAnimationTakeCount() ; i++)
-		{
-			shared_ptr<AnimationsTrack> track = shared_ptr<AnimationsTrack>( DEBUG_CLIENTBLOCK AnimationsTrack());
-
-			ClearModelSDK::sAnimationsTake__ take = ClearModelSDK::sAnimationsTake__(m_pMeshNode->GetAnimationTake(i));
-
-			track->SetName( take.m_sName );
-			track->SetStartTime( take.m_fStart );
-			track->SetEndTime( take.m_fEnd );
-
-			for (unsigned int j = 0; j < take.m_vecAnimationKeys.size() ; j++)
-			{
-				AnimationsKey* key = DEBUG_CLIENTBLOCK AnimationsKey( take.m_vecAnimationKeys[j].m_fBoneIndex, 
-																	  take.m_vecAnimationKeys[j].m_fTimestamp, 
-																	  take.m_vecAnimationKeys[j].m_Matrix.m_data );
-
-				track->AddAnimationsKey( shared_ptr<AnimationsKey>( key ));
-			}
-
-			AddAnimationsTrack( track );
-		}
-	}
+	m_bHasAnimation = (m_pMeshNode->GetBoneCount() != 0 );
 
 	return true;
 }

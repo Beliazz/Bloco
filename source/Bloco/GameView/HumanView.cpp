@@ -52,6 +52,9 @@ void BLOCO_API HumanView::VOnRender(double fTime, float fElapsedTime )
 
 	VRenderDiagnostic();
 
+	// render diagnostics
+	VRenderText();
+
 	m_pRenderer->End();
 
 
@@ -136,9 +139,6 @@ void BLOCO_API HumanView::VOnRender(double fTime, float fElapsedTime )
 
 		// end drawing
 		m_pRenderer->End();
-
-		// render diagnostics
-		VRenderText();
 
 		// record the last successful paint
 		m_lastDraw = m_currTick;
