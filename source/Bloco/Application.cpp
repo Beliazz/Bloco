@@ -276,20 +276,8 @@ void Application::OnUpdate(double dTime, float fElapsed)
 }
 void Application::OnIdle()
 {
-	MSG msg;
-
-	if(PeekMessage(&msg, m_pWindow->get(), 0, 0, PM_REMOVE))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
-
-	// process window messages
-	if(PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
-	{
-		TranslateMessage(&msg);
-		DispatchMessage(&msg);
-	}
+	m_pWindow->PeekMessages();
+	cgl::CGLWindow::PeekMessages(NULL);
 }
 
 
